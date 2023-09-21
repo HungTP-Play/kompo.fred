@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package kompo;
+
+message Volume {
+    // The name of the volume
+    string name = 1;
+
+    // The path of the volume (actual on the file system)
+    string actual_path = 2;
+
+    // The path that the volume will be mount to
+    string mount_path = 3;
+}

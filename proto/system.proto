@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package kompo;
+
+import "service.proto";
+import "config.proto";
+import "secret.proto";
+import "volume.proto";
+
+message System {
+    repeated Service services = 1;
+    repeated Config configs = 2;
+    repeated Secret secrets = 3;
+    repeated Volume volumes = 4;
+}

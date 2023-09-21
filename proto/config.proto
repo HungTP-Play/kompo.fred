@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package kompo;
+
+import "environment.proto";
+
+message Config {
+    string name = 1;
+
+    string path = 2;
+
+    repeated Environment environments = 3;
+}
