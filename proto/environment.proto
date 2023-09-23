@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package kompo;
-
-message Environment {
-    string key = 1;
-    string value = 2;
-}
