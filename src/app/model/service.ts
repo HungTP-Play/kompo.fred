@@ -1,11 +1,12 @@
 import type { Env } from "./config";
 import { ServiceInvalidError, ServiceWrongCallException } from "./error";
 import { Resource } from "./resource";
+import type { Volume } from "./volume";
 
 export class Service extends Resource {
     image: string = '';
     environments: Env[] = [];
-    volumes: any[] = [];
+    volumes: Volume[] = [];
     network: any[] = [];
 
     constructor(
@@ -34,6 +35,15 @@ export class Service extends Resource {
     withEnvironments(envs: Env[]): Service {
         this.environments = envs;
         return this;
+    }
+
+    withVolumes(volumes: Volume[]): Service {
+        this.volumes = volumes;
+        return this;
+    }
+
+    addVolume(volume: Volume) {
+        this.volumes.push(volume);
     }
 
     addEnv(env: Env) {
@@ -88,7 +98,6 @@ export class Service extends Resource {
         for (const k in obj) {
             if (Array.isArray(obj[k])) {
                 if (Array.from(obj[k]).length === 0) {
-                    console.log('Delete')
                     delete obj[k];
                 }
                 continue;
@@ -123,11 +132,12 @@ export class Service extends Resource {
 
     getSystemObject(): string | { [key: string]: any; } {
         this.isValid();
-        
+
         return {
             [this.name]: this.cleanUp({
                 image: this.image,
                 environments: this.environments.map((e) => e.getObject()),
+                volumes: this.volumes.map((v) => v.getObject())
             }),
         }
     }

@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { Env } from "../../../src/app/model/config";
 import { Service } from "../../../src/app/model/service";
+import { Volume } from "../../../src/app/model/volume";
 import { Yamler } from "../../../src/app/presentation/yamler";
 
 describe("Test service", () => {
     const yamler = new Yamler();
-    
+
     describe("Test service [name, image]", () => {
         const service = new Service("service_name").withImage("service_image");
         it("Should return right string format", () => {
@@ -44,6 +45,43 @@ describe("Test service", () => {
                             name: "env1",
                             value: "envValue1"
                         }
+                    ],
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
+
+    describe("Test service [name, image, volumes]", () => {
+
+        it("Should return right string format, without volumes -> empty", () => {
+            const service = new Service("service_name").withImage("service_image");
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with volumes", () => {
+            const service = new Service("service_name").withImage("service_image").withVolumes(
+                [
+                    new Volume().withMountPath('/app/data'),
+                    new Volume().withMountPath('/app/data2').withName('named'),
+                    new Volume().withMountPath('/app/data3').withPath('host/path')
+                ]
+            );
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    volumes: [
+                        '/app/data',
+                        'named:/app/data2',
+                        'host/path:/app/data3'
                     ],
                 }
             });
