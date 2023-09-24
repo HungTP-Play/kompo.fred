@@ -241,4 +241,45 @@ describe("Test service", () => {
             expect(service.buildSystemConfig()).toBe(expectString);
         });
     });
+
+    describe("Test service [name, image, entrypoint]", () => {
+
+        it("Should return right string format, without env_file -> empty", () => {
+            const service = new Service("service_name").withImage("service_image").withEnvFile([]);
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with env_file -> list string", () => {
+            const service = new Service("service_name").withImage("service_image").withEnvFile(["./file1", "./file2"])
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    env_file: ["./file1", "./file2"]
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with env_file -> list string -- ADD", () => {
+            const service = new Service("service_name").withImage("service_image").withEnvFile(["./file1", "./file2"])
+            service.addEnvFile('./file3');
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    env_file: ["./file1", "./file2", "./file3"]
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
 });

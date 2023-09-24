@@ -13,6 +13,7 @@ export class Service extends Resource {
     private containerName = '';
     private dependsOn: string[] = [];
     private entrypoint: string | string[] = '';
+    private envFile: string[] = [];
 
     constructor(
         private name: string,
@@ -70,6 +71,19 @@ export class Service extends Resource {
     withEntrypoint(entrypoint: string | string[]): Service {
         this.entrypoint = entrypoint;
         return this;
+    }
+
+    /**
+     * 
+     * @param files list of file (path to files)
+     */
+    withEnvFile(files: string[]): Service {
+        this.envFile = files;
+        return this;
+    }
+
+    addEnvFile(file: string) {
+        this.envFile.push(file);
     }
 
     addDependsOn(dependOn: string) {
@@ -187,6 +201,7 @@ export class Service extends Resource {
                 container_name: this.containerName,
                 depends_on: this.dependsOn,
                 entrypoint: this.entrypoint,
+                env_file: this.envFile,
             }),
         }
     }
