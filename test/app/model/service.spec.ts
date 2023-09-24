@@ -40,12 +40,11 @@ describe("Test service", () => {
             const expectString = yamler.stringify({
                 service_name: {
                     image: "service_image",
-                    environments: [
-                        {
-                            name: "env1",
-                            value: "envValue1"
-                        }
-                    ],
+                    environments:
+                    {
+                        "env1": "envValue1"
+                    }
+
                 }
             });
 

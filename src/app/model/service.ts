@@ -188,13 +188,26 @@ export class Service extends Resource {
         throw new ServiceWrongCallException();
     }
 
+    private envListToMap(envs: Env[]): { [key: string]: string } {
+        const envMap: { [key: string]: string } = {};
+        const envsObject = envs.map((e) => e.getObject());
+        for (const e of envsObject) {
+            const key = e['name'];
+            const value = e['value'];
+
+            envMap[key] = value;
+        }
+
+        return envMap
+    }
+
     getSystemObject(): string | { [key: string]: any; } {
         this.isValid();
 
         return {
             [this.name]: this.cleanUp({
                 image: this.image,
-                environments: this.environments.map((e) => e.getObject()),
+                environments: this.envListToMap(this.environments),
                 volumes: this.volumes.map((v) => v.getObject()),
                 command: this.command,
                 configs: this.configs.map((c) => c.getObject()),
