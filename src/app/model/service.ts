@@ -11,6 +11,7 @@ export class Service extends Resource {
     private network: any[] = [];
     private command: string | string[] = '';
     private containerName = '';
+    private dependsOn: string[] = [];
 
     constructor(
         private name: string,
@@ -58,6 +59,15 @@ export class Service extends Resource {
     withContainerName(name: string): Service {
         this.containerName = name;
         return this;
+    }
+
+    withDependsOn(dependsOn: string[]): Service {
+        this.dependsOn = dependsOn;
+        return this;
+    }
+
+    addDependsOn(dependOn: string) {
+        this.dependsOn.push(dependOn);
     }
 
     addConfig(config: Config) {
@@ -169,6 +179,7 @@ export class Service extends Resource {
                 command: this.command,
                 configs: this.configs.map((c) => c.getObject()),
                 container_name: this.containerName,
+                depends_on: this.dependsOn,
             }),
         }
     }

@@ -187,4 +187,31 @@ describe("Test service", () => {
             expect(service.buildSystemConfig()).toBe(expectString);
         });
     });
+
+    describe("Test service [name, image, depend_on]", () => {
+
+        it("Should return right string format, without command -> empty", () => {
+            const service = new Service("service_name").withImage("service_image").withDependsOn([]);
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with depends_on -- list of name", () => {
+            const service = new Service("service_name").withImage("service_image").withDependsOn(["app1", "app2"])
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    depends_on: ["app1", "app2"]
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
 });
