@@ -5,6 +5,7 @@ import { Yamler } from "../../../src/app/presentation/yamler";
 
 describe("Test service", () => {
     const yamler = new Yamler();
+    
     describe("Test service [name, image]", () => {
         const service = new Service("service_name").withImage("service_image");
         it("Should return right string format", () => {

@@ -1,3 +1,4 @@
+import { ConfigInvalidError } from "./error";
 import { Resource } from "./resource";
 
 export class Config extends Resource {
@@ -6,6 +7,14 @@ export class Config extends Resource {
         protected value: string
     ) {
         super();
+    }
+
+    isValid(): boolean {
+        if (this.key === "" || this.value === "") {
+            throw new ConfigInvalidError();
+        }
+
+        return true;
     }
 
     /**
@@ -52,10 +61,19 @@ export class Config extends Resource {
      * @returns 
      */
     getObject(): { [key: string]: any; } {
+        this.isValid();
+        
         return {
             name: this.key,
             value: this.value,
         }
+    }
+
+    /**
+     * Return empty
+     */
+    getSystemObject(): string | { [key: string]: any; } {
+        throw new Error("Method not implemented.");
     }
 }
 

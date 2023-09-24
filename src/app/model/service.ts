@@ -1,5 +1,5 @@
 import type { Env } from "./config";
-import { ServiceWrongCallException } from "./error";
+import { ServiceInvalidError, ServiceWrongCallException } from "./error";
 import { Resource } from "./resource";
 
 export class Service extends Resource {
@@ -40,6 +40,14 @@ export class Service extends Resource {
         this.environments.push(env);
     }
 
+    isValid(): boolean {
+        if (this.name === "" || this.image === "") {
+            throw new ServiceInvalidError();
+        }
+
+        return true;
+    }
+
     /**
      * **DO NOT CALL THIS METHOD**
      * 
@@ -65,7 +73,7 @@ export class Service extends Resource {
      * @returns 
      */
     buildSystemConfig(): string {
-        return this.yamler.stringify(this.getObject());
+        return this.yamler.stringify(this.getSystemObject());
     }
 
     /**
@@ -110,6 +118,12 @@ export class Service extends Resource {
     }
 
     getObject(): { [key: string]: any; } {
+        throw new ServiceWrongCallException();
+    }
+
+    getSystemObject(): string | { [key: string]: any; } {
+        this.isValid();
+        
         return {
             [this.name]: this.cleanUp({
                 image: this.image,
