@@ -14,6 +14,7 @@ export class Service extends Resource {
     private dependsOn: string[] = [];
     private entrypoint: string | string[] = '';
     private envFile: string[] = [];
+    private expose: string[] = [];
 
     constructor(
         private name: string,
@@ -80,6 +81,15 @@ export class Service extends Resource {
     withEnvFile(files: string[]): Service {
         this.envFile = files;
         return this;
+    }
+
+    withExpose(ports: string[]): Service {
+        this.expose = ports;
+        return this;
+    }
+
+    addExpose(port: string) {
+        this.expose.push(port);
     }
 
     addEnvFile(file: string) {
@@ -215,6 +225,7 @@ export class Service extends Resource {
                 depends_on: this.dependsOn,
                 entrypoint: this.entrypoint,
                 env_file: this.envFile,
+                expose: this.expose,
             }),
         }
     }
