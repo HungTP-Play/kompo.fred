@@ -1,4 +1,4 @@
-import type { Env } from "./config";
+import type { Config, Env } from "./config";
 import { ServiceInvalidError, ServiceWrongCallException } from "./error";
 import { Resource } from "./resource";
 import type { Volume } from "./volume";
@@ -7,6 +7,7 @@ export class Service extends Resource {
     image: string = '';
     environments: Env[] = [];
     volumes: Volume[] = [];
+    configs: Config[] = [];
     network: any[] = [];
     command: string | string[] = '';
 
@@ -46,6 +47,15 @@ export class Service extends Resource {
     withCommand(command: string | string[]): Service {
         this.command = command;
         return this;
+    }
+
+    withConfigs(configs: Config[]): Service {
+        this.configs = configs;
+        return this;
+    }
+
+    addConfig(config: Config) {
+        this.configs.push(config);
     }
 
     addVolume(volume: Volume) {
@@ -150,7 +160,8 @@ export class Service extends Resource {
                 image: this.image,
                 environments: this.environments.map((e) => e.getObject()),
                 volumes: this.volumes.map((v) => v.getObject()),
-                command: this.command
+                command: this.command,
+                configs: this.configs.map((c) => c.getObject()),
             }),
         }
     }

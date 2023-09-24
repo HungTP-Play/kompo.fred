@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Env } from "../../../src/app/model/config";
+import { Config, Env } from "../../../src/app/model/config";
 import { Service } from "../../../src/app/model/service";
 import { Volume } from "../../../src/app/model/volume";
 import { Yamler } from "../../../src/app/presentation/yamler";
@@ -123,6 +123,37 @@ describe("Test service", () => {
                 service_name: {
                     image: "service_image",
                     command: ['rm', '-rf', '.']
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
+
+
+    describe("Test service [name, image, config]", () => {
+
+        it("Should return right string format, without command -> empty", () => {
+            const service = new Service("service_name").withImage("service_image").withConfigs([]);
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with config -- list of name", () => {
+            const service = new Service("service_name").withImage("service_image").withConfigs([
+                new Config('config_1').withFile('/file1'),
+                new Config('config_2').withExternal(true),
+            ])
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    configs: ['config_1', 'config_2']
                 }
             });
 
