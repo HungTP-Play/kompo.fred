@@ -12,6 +12,7 @@ export class Service extends Resource {
     private command: string | string[] = '';
     private containerName = '';
     private dependsOn: string[] = [];
+    private entrypoint: string | string[] = '';
 
     constructor(
         private name: string,
@@ -63,6 +64,11 @@ export class Service extends Resource {
 
     withDependsOn(dependsOn: string[]): Service {
         this.dependsOn = dependsOn;
+        return this;
+    }
+
+    withEntrypoint(entrypoint: string | string[]): Service {
+        this.entrypoint = entrypoint;
         return this;
     }
 
@@ -180,6 +186,7 @@ export class Service extends Resource {
                 configs: this.configs.map((c) => c.getObject()),
                 container_name: this.containerName,
                 depends_on: this.dependsOn,
+                entrypoint: this.entrypoint,
             }),
         }
     }

@@ -214,4 +214,31 @@ describe("Test service", () => {
             expect(service.buildSystemConfig()).toBe(expectString);
         });
     });
+
+    describe("Test service [name, image, entrypoint]", () => {
+
+        it("Should return right string format, without command -> empty", () => {
+            const service = new Service("service_name").withImage("service_image").withEntrypoint([]);
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with entrypoint -> list string", () => {
+            const service = new Service("service_name").withImage("service_image").withEntrypoint(["rm", "-rf"])
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    entrypoint: ["rm", "-rf"]
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
 });
