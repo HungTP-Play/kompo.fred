@@ -4,12 +4,13 @@ import { Resource } from "./resource";
 import type { Volume } from "./volume";
 
 export class Service extends Resource {
-    image: string = '';
-    environments: Env[] = [];
-    volumes: Volume[] = [];
-    configs: Config[] = [];
-    network: any[] = [];
-    command: string | string[] = '';
+    private image: string = '';
+    private environments: Env[] = [];
+    private volumes: Volume[] = [];
+    private configs: Config[] = [];
+    private network: any[] = [];
+    private command: string | string[] = '';
+    private containerName = '';
 
     constructor(
         private name: string,
@@ -51,6 +52,11 @@ export class Service extends Resource {
 
     withConfigs(configs: Config[]): Service {
         this.configs = configs;
+        return this;
+    }
+
+    withContainerName(name: string): Service {
+        this.containerName = name;
         return this;
     }
 
@@ -162,6 +168,7 @@ export class Service extends Resource {
                 volumes: this.volumes.map((v) => v.getObject()),
                 command: this.command,
                 configs: this.configs.map((c) => c.getObject()),
+                container_name: this.containerName,
             }),
         }
     }
