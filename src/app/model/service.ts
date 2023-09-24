@@ -8,6 +8,7 @@ export class Service extends Resource {
     environments: Env[] = [];
     volumes: Volume[] = [];
     network: any[] = [];
+    command: string | string[] = '';
 
     constructor(
         private name: string,
@@ -42,6 +43,11 @@ export class Service extends Resource {
         return this;
     }
 
+    withCommand(command: string | string[]): Service {
+        this.command = command;
+        return this;
+    }
+
     addVolume(volume: Volume) {
         this.volumes.push(volume);
     }
@@ -56,6 +62,10 @@ export class Service extends Resource {
         }
 
         return true;
+    }
+
+    isValidInSystem(): boolean {
+        return this.isValid();
     }
 
     /**
@@ -83,6 +93,8 @@ export class Service extends Resource {
      * @returns 
      */
     buildSystemConfig(): string {
+        this.isValidInSystem();
+
         return this.yamler.stringify(this.getSystemObject());
     }
 
@@ -137,7 +149,8 @@ export class Service extends Resource {
             [this.name]: this.cleanUp({
                 image: this.image,
                 environments: this.environments.map((e) => e.getObject()),
-                volumes: this.volumes.map((v) => v.getObject())
+                volumes: this.volumes.map((v) => v.getObject()),
+                command: this.command
             }),
         }
     }

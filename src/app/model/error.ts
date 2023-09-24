@@ -14,7 +14,7 @@ export class ServiceInvalidError extends Error {
 export class ConfigInvalidError extends Error {
     name: string = "ConfigInvalidError";
     message: string = "Invalid config";
-    cause?: unknown = "Key and value are empty, these fields are all required."
+    cause?: unknown = "file or external is not provided. Or name is empty."
 }
 
 /** ENV */

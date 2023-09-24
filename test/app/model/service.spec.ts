@@ -89,4 +89,44 @@ describe("Test service", () => {
             expect(service.buildSystemConfig()).toBe(expectString);
         });
     });
+
+    describe("Test service [name, image, command]", () => {
+
+        it("Should return right string format, without command -> empty", () => {
+            const service = new Service("service_name").withImage("service_image").withCommand("");
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image"
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with command -- string", () => {
+            const service = new Service("service_name").withImage("service_image").withCommand('ls')
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    command: 'ls'
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+
+        it("Should return right string format with command -- list string", () => {
+            const service = new Service("service_name").withImage("service_image").withCommand(['rm', '-rf', '.'])
+
+            const expectString = yamler.stringify({
+                service_name: {
+                    image: "service_image",
+                    command: ['rm', '-rf', '.']
+                }
+            });
+
+            expect(service.buildSystemConfig()).toBe(expectString);
+        });
+    });
 });

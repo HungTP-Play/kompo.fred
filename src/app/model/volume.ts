@@ -45,6 +45,10 @@ export class Volume extends Resource {
         return true;
     }
 
+    isValidInSystem(): boolean {
+        throw new Error("Method not implemented.");
+    }
+
     /**
      * Return the short-hand volume configuration for a service
      * 
@@ -73,6 +77,8 @@ export class Volume extends Resource {
     }
 
     getSystemObject(): string | { [key: string]: any; } {
+        this.isValidInSystem();
+        
         throw new Error("Method not implemented.");
     }
 }

@@ -2,6 +2,103 @@ import { ConfigInvalidError } from "./error";
 import { Resource } from "./resource";
 
 export class Config extends Resource {
+    private file: string = '';
+    private external: boolean = false;
+
+    constructor(
+        private name: string,
+    ) {
+        super();
+    }
+
+    withFile(filePath: string): Config {
+        this.file = filePath;
+        return this;
+    }
+
+    withExternal(isUseExternal: boolean): Config {
+        this.external = isUseExternal;
+        return this;
+    }
+
+    isValid(): boolean {
+        if (this.name === "") {
+            throw new ConfigInvalidError();
+        }
+
+        if (this.file === "" && this.external === false) {
+            throw new ConfigInvalidError();
+        }
+
+        return true;
+    }
+
+
+    isValidInSystem(): boolean {
+        return this.isValid();
+    }
+
+    buildServiceConfig(): string {
+        this.isValid();
+
+        return this.yamler.stringify(this.getObject());
+    }
+
+    buildSystemConfig(): string {
+        this.isValidInSystem();
+
+        return this.yamler.stringify(this.getSystemObject());
+    }
+
+    /**
+     * Simply return the name of the config
+     */
+    getObject(): string | { [key: string]: any; } {
+        this.isValid();
+
+        return this.name;
+    }
+
+    /**
+     * Return the config object for system
+     * 
+     * Example with config file
+     * 
+     * ```yaml
+     * configs:
+     *   config_name:
+     *     file: /file/path
+     * ```
+     * 
+     * Example with config external
+     * ```yaml
+     * configs:
+     *   config_name:
+     *     external: true
+     * ```
+     * 
+     * Note that, only one way will be generate, if both external and file are provided, file will be picked.
+     */
+    getSystemObject(): string | { [key: string]: any; } {
+        this.isValidInSystem();
+
+        if (this.file) {
+            return {
+                [this.name]: {
+                    file: this.file
+                }
+            }
+        }
+
+        return {
+            [this.name]: {
+                external: this.external
+            }
+        }
+    }
+}
+
+export class Env extends Resource {
     constructor(
         protected key: string,
         protected value: string
@@ -17,6 +114,10 @@ export class Config extends Resource {
         return true;
     }
 
+    isValidInSystem(): boolean {
+        return this.isValid();
+    }
+
     /**
      * Return YAML string for a list of single config object
      * 
@@ -29,6 +130,8 @@ export class Config extends Resource {
      * @returns 
      */
     buildServiceConfig(): string {
+        this.isValid();
+
         return this.yamler.stringify([this.getObject()]);
     }
 
@@ -44,6 +147,8 @@ export class Config extends Resource {
      * @returns 
      */
     buildSystemConfig(): string {
+        this.isValidInSystem();
+
         return this.yamler.stringify([this.getObject()]);
     }
 
@@ -62,7 +167,7 @@ export class Config extends Resource {
      */
     getObject(): { [key: string]: any; } {
         this.isValid();
-        
+
         return {
             name: this.key,
             value: this.value,
@@ -74,33 +179,5 @@ export class Config extends Resource {
      */
     getSystemObject(): string | { [key: string]: any; } {
         throw new Error("Method not implemented.");
-    }
-}
-
-export class Env extends Config {
-    constructor(key: string, value: string) {
-        super(key, value);
-    }
-
-    buildServiceConfig(): string {
-        return super.buildServiceConfig();
-    }
-
-    buildSystemConfig(): string {
-        return super.buildSystemConfig();
-    }
-}
-
-export class Secret extends Config {
-    constructor(key: string, value: string) {
-        super(key, value);
-    }
-
-    buildServiceConfig(): string {
-        return super.buildServiceConfig();
-    }
-
-    buildSystemConfig(): string {
-        return super.buildSystemConfig();
     }
 }

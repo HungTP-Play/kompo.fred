@@ -3,7 +3,16 @@ import { Yamler } from "../presentation/yamler";
 export abstract class Resource {
     protected yamler: Yamler = new Yamler();
 
+    /**
+     * Is object valid in service scope
+     */
     abstract isValid(): boolean;
+
+    /**
+     * Is object valid in system scope
+     */
+    abstract isValidInSystem(): boolean;
+
     /**
      * Build configuration for service in YAML string, like JSON string but YAML
      */
